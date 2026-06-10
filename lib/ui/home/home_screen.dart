@@ -1,6 +1,6 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
@@ -23,6 +23,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool _isLoading = true;
   late final List<Product> _allProducts;
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -34,7 +35,13 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
 
-    _allProducts = dummyProducts; // Use all products instead of splitting
+    _allProducts = dummyProducts; // Use all products
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -172,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               builder: (context, state, child) {
                                 final name = state.user?.displayName ?? 'Guest';
                                 return Text(
-                                  '$name 🥬',
+                                  name,
                                   style: Theme.of(context)
                                       .textTheme
                                       .headlineLarge
@@ -193,6 +200,19 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
 
           SliverToBoxAdapter(child: const SizedBox(height: 16)),
+
+          // Search Bar Section
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: _buildSearchBar()
+                  .animate()
+                  .fadeIn(duration: 400.ms, delay: 200.ms)
+                  .slideY(begin: -0.1, end: 0),
+            ),
+          ),
+
+          SliverToBoxAdapter(child: const SizedBox(height: 24)),
 
           // Products Section Header
           SliverToBoxAdapter(
@@ -219,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ).animate().fadeIn(delay: 300.ms),
           ),
 
-          // BENTO GRID - All Products
+          // BENTO GRID - Always show all products
           SliverPadding(
             padding: const EdgeInsets.symmetric(
               horizontal: 16,
@@ -232,72 +252,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     .fadeIn(delay: (400 + (index * 100)).ms)
                     .slideY(begin: 0.1, end: 0, curve: Curves.easeOut);
               }, childCount: (_allProducts.length / 2).ceil()),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeroCard(Product product) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: AppTheme.primaryColor.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: AppTheme.primaryColor.withValues(alpha: 0.15),
-          width: 1,
-        ),
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            right: -20,
-            bottom: -20,
-            child: Hero(
-              tag: 'product_${product.id}',
-              child: Image.asset(product.imagePath, width: 220, height: 220),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '20% OFF',
-                    style: TextStyle(
-                      color: AppTheme.secondaryColor,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  product.name,
-                  style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                    fontSize: 28,
-                    height: 1.1,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Fresh from farm',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ],
             ),
           ),
         ],
@@ -414,7 +368,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     title: 'Added to Cart',
                     body: '${product.name} was added to your cart.',
                   );
-                  CustomSnackbar.showSuccess(
+                  CustomSnackbar.showTopNotification(
                     context: context,
                     message: '${product.name} added to cart',
                   );
@@ -435,6 +389,145 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  // Search Bar Widget
+  Widget _buildSearchBar() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: TypeAheadField<Product>(
+        controller: _searchController,
+        builder: (context, controller, focusNode) {
+          return TextField(
+            controller: controller,
+            focusNode: focusNode,
+            decoration: InputDecoration(
+              hintText: 'Search for food items...',
+              hintStyle: TextStyle(
+                color: Colors.grey.shade500,
+                fontSize: 16,
+              ),
+              prefixIcon: Icon(
+                LucideIcons.search,
+                color: Colors.grey.shade600,
+                size: 20,
+              ),
+              suffixIcon: _searchController.text.isNotEmpty
+                  ? IconButton(
+                      icon: Icon(
+                        LucideIcons.x,
+                        color: Colors.grey.shade600,
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        _searchController.clear();
+                        // Don't need to setState since we're not filtering the main grid
+                      },
+                    )
+                  : null,
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 16,
+              ),
+            ),
+            onChanged: (value) {
+              // Don't filter the main grid - only show suggestions
+              // The main screen always shows all products
+            },
+          );
+        },
+        suggestionsCallback: (pattern) async {
+          if (pattern.isEmpty) return [];
+          
+          return _allProducts.where((product) {
+            return product.name.toLowerCase().contains(pattern.toLowerCase()) ||
+                   product.category.toLowerCase().contains(pattern.toLowerCase()) ||
+                   product.description.toLowerCase().contains(pattern.toLowerCase());
+          }).take(5).toList(); // Limit to 5 suggestions
+        },
+        itemBuilder: (context, product) {
+          return ListTile(
+            leading: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.asset(
+                  product.imagePath,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Icon(
+                      LucideIcons.utensils,
+                      color: AppTheme.primaryColor,
+                      size: 20,
+                    );
+                  },
+                ),
+              ),
+            ),
+            title: Text(
+              product.name,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+            ),
+            subtitle: Text(
+              product.category,
+              style: TextStyle(
+                color: Colors.grey.shade600,
+                fontSize: 12,
+              ),
+            ),
+            trailing: Text(
+              '\$${product.price.toStringAsFixed(2)}',
+              style: TextStyle(
+                color: AppTheme.primaryColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+          );
+        },
+        onSelected: (product) {
+          // Clear the search field after selection
+          _searchController.clear();
+          
+          // Navigate to product detail
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ProductDetailScreen(product: product),
+            ),
+          );
+        },
+        hideOnEmpty: true,
+        hideOnError: true,
+        decorationBuilder: (context, child) {
+          return Material(
+            elevation: 8,
+            borderRadius: BorderRadius.circular(12),
+            shadowColor: Colors.black.withValues(alpha: 0.1),
+            child: child,
+          );
+        },
       ),
     );
   }

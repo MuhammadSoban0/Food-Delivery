@@ -204,11 +204,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(title: const Text('Profile'), centerTitle: true),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
+      body: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 0, 24, 120),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // User Header
+            // User Profile Card
             Consumer<AppState>(
               builder: (context, state, child) {
                 final user = state.user;
@@ -219,7 +220,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(24),
+                      padding: const EdgeInsets.all(32),
                       decoration: ShapeDecoration(
                         color: Colors.white,
                         shape: RoundedRectangleBorder(
@@ -239,8 +240,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           GestureDetector(
                             onTap: _showAvatarPicker,
                             child: Container(
-                              width: 90,
-                              height: 90,
+                              width: 100,
+                              height: 100,
                               decoration: BoxDecoration(
                                 color: AppTheme.primaryColor.withValues(
                                   alpha: 0.1,
@@ -250,34 +251,66 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: Center(
                                 child: Text(
                                   _selectedAvatar,
-                                  style: const TextStyle(fontSize: 40),
+                                  style: const TextStyle(fontSize: 44),
                                 ),
                               ),
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 20),
                           Text(
                             name,
                             style: Theme.of(context).textTheme.headlineMedium
                                 ?.copyWith(
-                                  fontSize: 22,
+                                  fontSize: 24,
                                   fontWeight: FontWeight.bold,
                                 ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 8),
                           Text(
                             email,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(color: Colors.grey.shade600),
+                                ?.copyWith(
+                                  color: Colors.grey.shade600,
+                                  fontSize: 16,
+                                ),
                           ),
+                          const SizedBox(height: 32),
+                          // Log Out Button
+                          SizedBox(
+                            width: double.infinity,
+                            height: 56,
+                            child: ElevatedButton.icon(
+                              onPressed: () => _showLogoutConfirmation(context),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                              icon: const Icon(
+                                LucideIcons.logOut,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              label: const Text(
+                                'Log Out',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.1),
                         ],
                       ),
                     ).animate().fadeIn().slideY(begin: 0.1, end: 0),
                     Positioned(
-                      top: 8,
-                      right: 8,
+                      top: 12,
+                      right: 12,
                       child: IconButton(
                         icon: const Icon(
                           LucideIcons.edit2,
@@ -294,219 +327,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 );
               },
             ),
-
-            const SizedBox(height: 32),
-
-            // Settings List
-            _buildSectionHeader(
-              context,
-              'General Settings',
-            ).animate().fadeIn(delay: 100.ms),
-            const SizedBox(height: 16),
-            Container(
-              decoration: ShapeDecoration(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                shadows: [
-                  BoxShadow(
-                    color: Color(0x21000000),
-                    blurRadius: 17,
-                    offset: Offset(0, 6),
-                    spreadRadius: 0,
-                  )
-                ],
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: Material(
-                color: Colors.transparent,
-                child: Column(
-                  children: [
-                    _buildListTile(
-                      icon: LucideIcons.mapPin,
-                      title: 'Delivery Addresses',
-                      delay: 150,
-                      onTap: () {},
-                    ),
-                    _buildDivider(),
-                    _buildListTile(
-                      icon: LucideIcons.creditCard,
-                      title: 'Payment Methods',
-                      delay: 200,
-                      onTap: () {},
-                    ),
-                    _buildDivider(),
-                    _buildListTile(
-                      icon: LucideIcons.bellRing,
-                      title: 'Notifications',
-                      delay: 250,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const InAppNotificationsScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 32),
-
-            _buildSectionHeader(
-              context,
-              'About App',
-            ).animate().fadeIn(delay: 300.ms),
-            const SizedBox(height: 16),
-            Container(
-              decoration: ShapeDecoration(
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                shadows: [
-                  BoxShadow(
-                    color: Color(0x21000000),
-                    blurRadius: 17,
-                    offset: Offset(0, 6),
-                    spreadRadius: 0,
-                  )
-                ],
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: Material(
-                color: Colors.transparent,
-                child: Column(
-                  children: [
-                    _buildListTile(
-                      icon: LucideIcons.info,
-                      title: 'About FreshCart',
-                      delay: 350,
-                      onTap: () {},
-                    ),
-                    _buildDivider(),
-                    _buildListTile(
-                      icon: LucideIcons.shieldCheck,
-                      title: 'Privacy Policy',
-                      delay: 400,
-                      onTap: () {},
-                    ),
-                    _buildDivider(),
-                    _buildListTile(
-                      icon: LucideIcons.fileText,
-                      title: 'Terms & Conditions',
-                      delay: 450,
-                      onTap: () {},
-                    ),
-                    _buildDivider(),
-                    _buildListTile(
-                      icon: LucideIcons.smartphone,
-                      title: 'App Version',
-                      trailing: 'v1.0.0',
-                      delay: 500,
-                    ),
-                    _buildDivider(),
-                    _buildListTile(
-                      icon: LucideIcons.logOut,
-                      title: 'Log Out',
-                      titleColor: Colors.red,
-                      iconColor: Colors.red,
-                      iconBackgroundColor: Colors.red.withValues(alpha: 0.1),
-                      hideTrailing: true,
-                      delay: 550,
-                      onTap: () {
-                        _showLogoutConfirmation(context);
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSectionHeader(BuildContext context, String title) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Text(
-        title,
-        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-          fontWeight: FontWeight.bold,
-          color: AppTheme.textSecondaryColor,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildListTile({
-    required IconData icon,
-    required String title,
-    String? trailing,
-    required int delay,
-    VoidCallback? onTap,
-    Color? titleColor,
-    Color? iconColor,
-    Color? iconBackgroundColor,
-    bool hideTrailing = false,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: iconBackgroundColor ?? AppTheme.backgroundColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(
-                icon,
-                color: iconColor ?? AppTheme.textPrimaryColor,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 15,
-                  color: titleColor ?? Colors.black,
-                ),
-              ),
-            ),
-            if (trailing != null)
-              Text(
-                trailing,
-                style: TextStyle(
-                  color: AppTheme.textSecondaryColor,
-                  fontWeight: FontWeight.w500,
-                ),
-              )
-            else if (!hideTrailing)
-              const Icon(
-                LucideIcons.chevronRight,
-                size: 20,
-                color: Colors.grey,
-              ),
-          ],
-        ),
-      ),
-    ).animate().fadeIn(delay: delay.ms).slideX(begin: 0.1, end: 0);
-  }
-
-  Widget _buildDivider() {
-    return Divider(height: 1, indent: 64, color: Colors.grey.shade100);
-  }
 }

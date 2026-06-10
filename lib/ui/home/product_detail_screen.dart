@@ -226,7 +226,7 @@ class ProductDetailScreen extends StatelessWidget {
                           title: 'Added to Cart',
                           body: '${product.name} was added to your cart.',
                         );
-                        CustomSnackbar.showSuccess(
+                        CustomSnackbar.showTopNotification(
                           context: context,
                           message: '${product.name} added to cart',
                         );
