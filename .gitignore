@@ -19,14 +19,16 @@ migrate_working_dir/
 .env.staging
 *.env
 
+# Google Services Configuration
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+
 # IntelliJ related
 *.iml
 *.ipr
 *.iws
 .idea/
-
 # The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
 # is commented out by default.
 #.vscode/
 

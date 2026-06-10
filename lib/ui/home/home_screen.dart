@@ -449,13 +449,10 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         },
         suggestionsCallback: (pattern) async {
-          print('Search pattern: "$pattern"'); // Debug log
-          
           // Return empty list if pattern is empty
           if (pattern.isEmpty) return [];
           
           final searchTerm = pattern.toLowerCase().trim();
-          print('Search term after processing: "$searchTerm"'); // Debug log
           
           final filteredProducts = _allProducts.where((product) {
             final productName = product.name.toLowerCase();
@@ -463,15 +460,10 @@ class _HomeScreenState extends State<HomeScreen> {
             
             final matches = productName.contains(searchTerm) ||
                            productCategory.contains(searchTerm);
-                           
-            if (matches) {
-              print('Match found: ${product.name}'); // Debug log
-            }
             
             return matches;
           }).toList();
           
-          print('Total matches: ${filteredProducts.length}'); // Debug log
           return filteredProducts.take(5).toList();
         },
         itemBuilder: (context, product) {
