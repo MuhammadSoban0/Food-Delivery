@@ -23,8 +23,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _isLoading = true;
-  late final List<Product> _carouselProducts;
-  late final List<Product> _gridProducts;
+  late final List<Product> _allProducts;
 
   @override
   void initState() {
@@ -36,8 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
 
-    _carouselProducts = dummyProducts.take(5).toList();
-    _gridProducts = dummyProducts.skip(5).toList();
+    _allProducts = dummyProducts; // Use all products instead of splitting
   }
 
   @override
@@ -260,41 +258,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
           SliverToBoxAdapter(child: const SizedBox(height: 16)),
 
-          // CAROUSEL
-          SliverToBoxAdapter(
-            child:
-                CarouselSlider.builder(
-                      itemCount: _carouselProducts.length,
-                      options: CarouselOptions(
-                        height: 180,
-                        autoPlay: true,
-                        enlargeCenterPage: true,
-                        viewportFraction: 0.85,
-                        autoPlayCurve: Curves.easeInOutCubic,
-                        autoPlayAnimationDuration: const Duration(
-                          milliseconds: 800,
-                        ),
-                      ),
-                      itemBuilder: (context, index, realIndex) {
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => ProductDetailScreen(
-                                  product: _carouselProducts[index],
-                                ),
-                              ),
-                            );
-                          },
-                          child: _buildHeroCard(_carouselProducts[index]),
-                        );
-                      },
-                    )
-                    .animate()
-                    .fadeIn(delay: 300.ms)
-                    .slideY(begin: 0.1, end: 0, curve: Curves.easeOutCubic),
-          ),
-
+          // Products Section Header
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
@@ -302,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Fresh Deals',
+                    'Fresh Products',
                     style: Theme.of(
                       context,
                     ).textTheme.headlineMedium?.copyWith(fontSize: 22),
@@ -316,10 +280,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-            ).animate().fadeIn(delay: 400.ms),
+            ).animate().fadeIn(delay: 300.ms),
           ),
 
-          // BENTO GRID
+          // BENTO GRID - All Products
           SliverPadding(
             padding: const EdgeInsets.symmetric(
               horizontal: 16,
@@ -329,9 +293,9 @@ class _HomeScreenState extends State<HomeScreen> {
               delegate: SliverChildBuilderDelegate((context, index) {
                 return _buildBentoRow(index)
                     .animate()
-                    .fadeIn(delay: (500 + (index * 100)).ms)
+                    .fadeIn(delay: (400 + (index * 100)).ms)
                     .slideY(begin: 0.1, end: 0, curve: Curves.easeOut);
-              }, childCount: (_gridProducts.length / 2).ceil()),
+              }, childCount: (_allProducts.length / 2).ceil()),
             ),
           ),
         ],
@@ -406,63 +370,55 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildBentoRow(int rowIndex) {
-    // We create a pattern:
-    // Row 0: 2 items (split)
-    // Row 1: 1 item (wide)
-    // Row 2: 2 items (split)
-    // etc.
-
+    // Always create rows with 2 items (no wide cards)
     int itemIndex = rowIndex * 2;
-    // Adjust logic for bento
-    bool isWideRow = rowIndex % 2 != 0;
 
-    if (isWideRow) {
-      if (itemIndex < _gridProducts.length) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 16.0),
-          child: _buildProductCard(_gridProducts[itemIndex], isWide: true),
-        );
-      }
-    } else {
-      if (itemIndex + 1 < _gridProducts.length) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 16.0),
-          child: Row(
-            children: [
-              Expanded(child: _buildProductCard(_gridProducts[itemIndex])),
-              const SizedBox(width: 16),
-              Expanded(child: _buildProductCard(_gridProducts[itemIndex + 1])),
-            ],
-          ),
-        );
-      } else if (itemIndex < _gridProducts.length) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 16.0),
-          child: _buildProductCard(_gridProducts[itemIndex]),
-        );
-      }
+    if (itemIndex + 1 < _allProducts.length) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 16.0),
+        child: Row(
+          children: [
+            Expanded(child: _buildProductCard(_allProducts[itemIndex])),
+            const SizedBox(width: 16),
+            Expanded(child: _buildProductCard(_allProducts[itemIndex + 1])),
+          ],
+        ),
+      );
+    } else if (itemIndex < _allProducts.length) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 16.0),
+        child: Row(
+          children: [
+            Expanded(child: _buildProductCard(_allProducts[itemIndex])),
+            const Expanded(child: SizedBox()), // Empty space for last item
+          ],
+        ),
+      );
     }
     return const SizedBox.shrink();
   }
 
-  Widget _buildProductCard(Product product, {bool isWide = false}) {
+  Widget _buildProductCard(Product product) {
     return Container(
-      height: isWide ? 160 : 220,
-      decoration: BoxDecoration(
+      height: 220,
+      decoration: ShapeDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        shadows: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
+            color: Color(0x21000000),
+            blurRadius: 17,
+            offset: Offset(0, 6),
+            spreadRadius: 0,
+          )
         ],
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(20),
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(
@@ -470,9 +426,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             );
           },
-          child: isWide
-              ? _buildWideCardContent(product)
-              : _buildSquareCardContent(product),
+          child: _buildSquareCardContent(product),
         ),
       ),
     );
@@ -549,109 +503,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildWideCardContent(Product product) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 3,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppTheme.secondaryColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    product.category,
-                    style: TextStyle(
-                      color: AppTheme.secondaryColor,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  product.name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 20,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      '\$${product.price.toStringAsFixed(2)}',
-                      style: TextStyle(
-                        color: AppTheme.primaryColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    InkWell(
-                      onTap: () {
-                        context.read<AppState>().addToCart(product);
-
-                        context.read<AppState>().addNotification(
-                          title: 'Added to Cart',
-                          body: '${product.name} was added to your cart.',
-                        );
-                        CustomSnackbar.showSuccess(
-                          context: context,
-                          message: '${product.name} added to cart',
-                        );
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppTheme.primaryColor,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        child: const Text(
-                          'Add to Cart',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Hero(
-              tag: 'product_${product.id}',
-              child: Image.asset(product.imagePath)
-                  .animate(onPlay: (c) => c.repeat(reverse: true))
-                  .moveY(
-                    begin: -5,
-                    end: 5,
-                    duration: 2.seconds,
-                    curve: Curves.easeInOutSine,
-                  ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
