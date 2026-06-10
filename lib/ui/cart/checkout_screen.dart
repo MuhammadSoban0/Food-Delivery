@@ -146,9 +146,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
-      appBar: AppBar(title: const Text('Checkout'), centerTitle: true),
+      appBar: AppBar(title: const Text('Checkout'), centerTitle: true,
+        leading: IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.chevron_left)),),
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -231,63 +232,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               const SizedBox(height: 32),
 
               // Payment Details Section
-              const Text(
-                'Payment Details',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-
-              _buildInput(
-                label: 'Cardholder Name',
-                icon: LucideIcons.user,
-                hint: 'John Doe',
-              ),
-              const SizedBox(height: 16),
-              _buildInput(
-                label: 'Card Number',
-                icon: LucideIcons.creditCard,
-                hint: '0000 0000 0000 0000',
-                keyboardType: TextInputType.number,
-                formatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(16),
-                  _CardNumberFormatter(),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildInput(
-                      label: 'Expiry',
-                      icon: LucideIcons.calendar,
-                      hint: 'MM/YY',
-                      keyboardType: TextInputType.number,
-                      formatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(4),
-                        _CardExpiryFormatter(),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _buildInput(
-                      label: 'CVC',
-                      icon: LucideIcons.lock,
-                      hint: '123',
-                      isPassword: true,
-                      keyboardType: TextInputType.number,
-                      formatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(3),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-
+              const Spacer(),
               const SizedBox(height: 40),
 
               SizedBox(
@@ -319,6 +264,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         ),
                 ),
               ),
+              const SizedBox(height: 40),
             ],
           ),
         ),
@@ -488,7 +434,7 @@ class OrderSuccessDialog extends StatelessWidget {
                   Navigator.of(context).pop();
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryColor,
+                  backgroundColor: Colors.green,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
