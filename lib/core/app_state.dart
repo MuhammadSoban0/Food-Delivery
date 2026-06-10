@@ -17,8 +17,11 @@ class AppState extends ChangeNotifier {
   final List<AppNotification> _notifications = [];
   List<AppNotification> get notifications => _notifications;
 
-  int get unreadNotificationsCount =>
-      _notifications.where((n) => !n.isRead).length;
+  int get unreadNotificationsCount {
+    final count = _notifications.where((n) => !n.isRead).length;
+    debugPrint('🔔 Unread notifications count: $count');
+    return count;
+  }
 
   AppState() {
     _loadNotifications();
@@ -107,6 +110,7 @@ class AppState extends ChangeNotifier {
       }
     }
     if (changed) {
+      debugPrint('📢 Marked ${_notifications.length} notifications as read. Unread count: $unreadNotificationsCount');
       notifyListeners();
       await _saveNotifications();
     }

@@ -19,11 +19,22 @@ class _InAppNotificationsScreenState extends State<InAppNotificationsScreen> {
   void initState() {
     super.initState();
     // Mark all as read when screen is opened
+    _markAsRead();
+  }
+
+  void _markAsRead() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         context.read<AppState>().markAllNotificationsAsRead();
       }
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Also mark as read when dependencies change (like when navigating back)
+    _markAsRead();
   }
 
   @override
@@ -34,13 +45,6 @@ class _InAppNotificationsScreenState extends State<InAppNotificationsScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(
-            LucideIcons.chevronLeft,
-            color: AppTheme.textPrimaryColor,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
         title: Text(
           'Notifications',
           style: Theme.of(
@@ -101,15 +105,18 @@ class _InAppNotificationsScreenState extends State<InAppNotificationsScreen> {
               return Container(
                     margin: const EdgeInsets.only(bottom: 16),
                     padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
+                    decoration: ShapeDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      shadows: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.02),
-                          blurRadius: 10,
-                          offset: const Offset(0, 5),
-                        ),
+                          color: Color(0x21000000),
+                          blurRadius: 17,
+                          offset: Offset(0, 6),
+                          spreadRadius: 0,
+                        )
                       ],
                     ),
                     child: Row(

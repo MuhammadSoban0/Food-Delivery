@@ -125,17 +125,20 @@ class _CartScreenState extends State<CartScreen> {
                   24,
                   120,
                 ), // Padding for bottom nav
-                decoration: BoxDecoration(
+                decoration: ShapeDecoration(
                   color: Colors.white,
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(32),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 20,
-                      offset: const Offset(0, -5),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(32),
                     ),
+                  ),
+                  shadows: [
+                    BoxShadow(
+                      color: Color(0x21000000),
+                      blurRadius: 17,
+                      offset: Offset(0, -6),
+                      spreadRadius: 0,
+                    )
                   ],
                 ),
                 child: Column(
@@ -186,15 +189,18 @@ class _CartScreenState extends State<CartScreen> {
   Widget _buildCartItem(BuildContext context, Product product, int quantity) {
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
+      decoration: ShapeDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        shadows: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
+            color: Color(0x21000000),
+            blurRadius: 17,
+            offset: Offset(0, 6),
+            spreadRadius: 0,
+          )
         ],
       ),
       child: Row(

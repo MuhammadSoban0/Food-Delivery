@@ -161,15 +161,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               const SizedBox(height: 16),
               Container(
                 padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
+                decoration: ShapeDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  shadows: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.02),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
+                      color: Color(0x21000000),
+                      blurRadius: 17,
+                      offset: Offset(0, 6),
+                      spreadRadius: 0,
+                    )
                   ],
                 ),
                 child: Column(
@@ -344,10 +347,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         ),
         const SizedBox(height: 8),
         Container(
-          decoration: BoxDecoration(
+          decoration: ShapeDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade200),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            shadows: [
+              BoxShadow(
+                color: Color(0x11000000),
+                blurRadius: 8,
+                offset: Offset(0, 2),
+                spreadRadius: 0,
+              )
+            ],
           ),
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: TextField(

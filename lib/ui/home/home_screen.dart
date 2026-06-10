@@ -4,7 +4,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
-import '../notifications/in_app_notifications_screen.dart';
 
 import '../../core/app_state.dart';
 import '../../core/app_theme.dart';
@@ -186,70 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         .animate()
                         .fadeIn(duration: 400.ms)
                         .slideX(begin: -0.1, end: 0),
-                    Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.05),
-                                blurRadius: 10,
-                                offset: const Offset(0, 5),
-                              ),
-                            ],
-                          ),
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              IconButton(
-                                icon: const Icon(
-                                  LucideIcons.bell,
-                                  color: AppTheme.textPrimaryColor,
-                                ),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const InAppNotificationsScreen(),
-                                    ),
-                                  );
-                                },
-                              ),
-                              Consumer<AppState>(
-                                builder: (context, state, child) {
-                                  if (state.unreadNotificationsCount > 0) {
-                                    return Positioned(
-                                      right: 12,
-                                      top: 12,
-                                      child: Container(
-                                        width: 10,
-                                        height: 10,
-                                        decoration: BoxDecoration(
-                                          color: Colors.red,
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: Colors.white,
-                                            width: 2,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                  return const SizedBox.shrink();
-                                },
-                              ),
-                            ],
-                          ),
-                        )
-                        .animate()
-                        .fadeIn(delay: 200.ms)
-                        .scale(
-                          begin: const Offset(0.8, 0.8),
-                          curve: Curves.easeOutBack,
-                        ),
+                    // Removed notification button from here
                   ],
                 ),
               ),

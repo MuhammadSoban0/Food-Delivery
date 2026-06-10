@@ -220,15 +220,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
+                      decoration: ShapeDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(24),
-                        boxShadow: [
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        shadows: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.02),
-                            blurRadius: 10,
-                            offset: const Offset(0, 5),
-                          ),
+                            color: Color(0x21000000),
+                            blurRadius: 17,
+                            offset: Offset(0, 6),
+                            spreadRadius: 0,
+                          )
                         ],
                       ),
                       child: Column(
@@ -301,15 +304,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ).animate().fadeIn(delay: 100.ms),
             const SizedBox(height: 16),
             Container(
-              decoration: BoxDecoration(
+              decoration: ShapeDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                shadows: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.02),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
-                  ),
+                    color: Color(0x21000000),
+                    blurRadius: 17,
+                    offset: Offset(0, 6),
+                    spreadRadius: 0,
+                  )
                 ],
               ),
               clipBehavior: Clip.antiAlias,
@@ -358,15 +364,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ).animate().fadeIn(delay: 300.ms),
             const SizedBox(height: 16),
             Container(
-              decoration: BoxDecoration(
+              decoration: ShapeDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                shadows: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.02),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
-                  ),
+                    color: Color(0x21000000),
+                    blurRadius: 17,
+                    offset: Offset(0, 6),
+                    spreadRadius: 0,
+                  )
                 ],
               ),
               clipBehavior: Clip.antiAlias,
