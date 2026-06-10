@@ -393,7 +393,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Search Bar Widget
   Widget _buildSearchBar() {
     return Container(
       decoration: BoxDecoration(
@@ -425,7 +424,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.grey.shade600,
                 size: 20,
               ),
-              suffixIcon: _searchController.text.isNotEmpty
+              suffixIcon: controller.text.isNotEmpty
                   ? IconButton(
                       icon: Icon(
                         LucideIcons.x,
@@ -433,8 +432,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         size: 20,
                       ),
                       onPressed: () {
-                        _searchController.clear();
-                        // Don't need to setState since we're not filtering the main grid
+                        controller.clear();
+                        setState(() {}); // Update UI to hide the clear button
                       },
                     )
                   : null,
@@ -445,64 +444,92 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             onChanged: (value) {
-              // Don't filter the main grid - only show suggestions
-              // The main screen always shows all products
+              setState(() {}); // Update UI for clear button visibility
             },
           );
         },
         suggestionsCallback: (pattern) async {
+          print('Search pattern: "$pattern"'); // Debug log
+          
+          // Return empty list if pattern is empty
           if (pattern.isEmpty) return [];
           
-          return _allProducts.where((product) {
-            return product.name.toLowerCase().contains(pattern.toLowerCase()) ||
-                   product.category.toLowerCase().contains(pattern.toLowerCase()) ||
-                   product.description.toLowerCase().contains(pattern.toLowerCase());
-          }).take(5).toList(); // Limit to 5 suggestions
+          final searchTerm = pattern.toLowerCase().trim();
+          print('Search term after processing: "$searchTerm"'); // Debug log
+          
+          final filteredProducts = _allProducts.where((product) {
+            final productName = product.name.toLowerCase();
+            final productCategory = product.category.toLowerCase();
+            
+            final matches = productName.contains(searchTerm) ||
+                           productCategory.contains(searchTerm);
+                           
+            if (matches) {
+              print('Match found: ${product.name}'); // Debug log
+            }
+            
+            return matches;
+          }).toList();
+          
+          print('Total matches: ${filteredProducts.length}'); // Debug log
+          return filteredProducts.take(5).toList();
         },
         itemBuilder: (context, product) {
-          return ListTile(
-            leading: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppTheme.primaryColor.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
-                  product.imagePath,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Icon(
-                      LucideIcons.utensils,
-                      color: AppTheme.primaryColor,
-                      size: 20,
-                    );
-                  },
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.grey.shade100,
+                  width: 0.5,
                 ),
               ),
             ),
-            title: Text(
-              product.name,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              leading: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.asset(
+                    product.imagePath,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(
+                        LucideIcons.utensils,
+                        color: AppTheme.primaryColor,
+                        size: 20,
+                      );
+                    },
+                  ),
+                ),
               ),
-            ),
-            subtitle: Text(
-              product.category,
-              style: TextStyle(
-                color: Colors.grey.shade600,
-                fontSize: 12,
+              title: Text(
+                product.name,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
               ),
-            ),
-            trailing: Text(
-              '\$${product.price.toStringAsFixed(2)}',
-              style: TextStyle(
-                color: AppTheme.primaryColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
+              subtitle: Text(
+                product.category,
+                style: TextStyle(
+                  color: Colors.grey.shade600,
+                  fontSize: 12,
+                ),
+              ),
+              trailing: Text(
+                '\$${product.price.toStringAsFixed(2)}',
+                style: TextStyle(
+                  color: AppTheme.primaryColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
               ),
             ),
           );
@@ -510,6 +537,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onSelected: (product) {
           // Clear the search field after selection
           _searchController.clear();
+          setState(() {}); // Update UI
           
           // Navigate to product detail
           Navigator.of(context).push(
@@ -525,7 +553,11 @@ class _HomeScreenState extends State<HomeScreen> {
             elevation: 8,
             borderRadius: BorderRadius.circular(12),
             shadowColor: Colors.black.withValues(alpha: 0.1),
-            child: child,
+            color: Colors.white,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: child,
+            ),
           );
         },
       ),
