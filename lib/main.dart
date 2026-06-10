@@ -8,6 +8,9 @@ import 'core/app_state.dart';
 import 'services/stripe_service.dart';
 import 'services/stripe_debug.dart';
 import 'ui/splash/splash_screen.dart';
+import 'ui/auth/auth_screen.dart';
+import 'ui/main/main_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,7 +40,33 @@ class MyApp extends StatelessWidget {
       title: 'Food Delivery',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const SplashScreen(),
+      home: FoodgoSplashScreen(
+        onFinished: (ctx) {
+          // Check if user is already authenticated
+          final user = FirebaseAuth.instance.currentUser;
+          if (user != null) {
+            // User is logged in, go to main screen
+            Navigator.of(ctx).pushReplacement(
+              PageRouteBuilder(
+                transitionDuration: const Duration(milliseconds: 600),
+                pageBuilder: (_, __, ___) => const MainScreen(),
+                transitionsBuilder: (_, anim, __, child) =>
+                    FadeTransition(opacity: anim, child: child),
+              ),
+            );
+          } else {
+            // User is not logged in, go to auth screen
+            Navigator.of(ctx).pushReplacement(
+              PageRouteBuilder(
+                transitionDuration: const Duration(milliseconds: 600),
+                pageBuilder: (_, __, ___) => const AuthScreen(),
+                transitionsBuilder: (_, anim, __, child) =>
+                    FadeTransition(opacity: anim, child: child),
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 }

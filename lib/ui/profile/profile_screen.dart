@@ -4,7 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import '../../core/app_theme.dart';
 import '../../core/app_state.dart';
-import '../splash/splash_screen.dart';
+import '../auth/auth_screen.dart';
 import '../notifications/in_app_notifications_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -162,12 +162,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ); // Close sheet first
                           await context.read<AppState>().signOut();
 
-                          // After signing out, we must route back to SplashScreen
-                          // so it evaluates the fresh empty auth state and pushes us to AuthScreen properly.
+                          // After signing out, navigate directly to auth screen
                           if (!context.mounted) return;
                           Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                              builder: (_) => const SplashScreen(),
+                            PageRouteBuilder(
+                              transitionDuration: const Duration(milliseconds: 600),
+                              pageBuilder: (_, __, ___) => const AuthScreen(),
+                              transitionsBuilder: (_, anim, __, child) =>
+                                  FadeTransition(opacity: anim, child: child),
                             ),
                             (route) => false,
                           );

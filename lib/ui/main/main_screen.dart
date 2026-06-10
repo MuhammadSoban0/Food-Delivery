@@ -3,27 +3,38 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:iconly/iconly.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import '../../core/app_theme.dart';
 import '../../core/app_state.dart';
 import '../home/home_screen.dart';
 import '../cart/cart_screen.dart';
+import '../delivery/delivery_tracking_screen.dart';
 import '../profile/profile_screen.dart';
 import '../notifications/in_app_notifications_screen.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  const MainScreen({super.key, this.initialIndex = 0});
+  
+  final int initialIndex;
 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _currentIndex = 0;
+  late int _currentIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+  }
 
   final List<Widget> _screens = const [
     HomeScreen(),
     InAppNotificationsScreen(),
     CartScreen(),
+    DeliveryTrackingScreen(),
     ProfileScreen(),
   ];
 
@@ -90,6 +101,12 @@ class _MainScreenState extends State<MainScreen> {
               CrystalNavigationBarItem(
                 icon: IconlyBold.bag,
                 unselectedIcon: IconlyLight.bag,
+                selectedColor: Colors.white,
+                unselectedColor: Colors.white54,
+              ),
+              CrystalNavigationBarItem(
+                icon: LucideIcons.truck,
+                unselectedIcon: LucideIcons.truck,
                 selectedColor: Colors.white,
                 unselectedColor: Colors.white54,
               ),

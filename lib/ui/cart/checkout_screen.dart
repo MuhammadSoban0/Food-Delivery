@@ -97,9 +97,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       if (paymentSuccess && mounted) {
         // Payment successful
+        final orderId = 'ORD-${DateTime.now().millisecondsSinceEpoch.toString().substring(8)}';
+        final totalAmount = total.toStringAsFixed(2);
+        
         context.read<AppState>().addNotification(
           title: 'Payment Successful! 🎉',
-          body: 'Your grocery order has been confirmed and is being prepared for delivery.',
+          body: 'Your food order #$orderId (\$$totalAmount) has been confirmed and is being prepared for delivery.',
         );
 
         showDialog(
@@ -417,7 +420,7 @@ class OrderSuccessDialog extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             const Text(
-              'Your groceries are on the way. Sit back and relax!',
+              'Your food is on the way. Sit back and relax!',
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.black54, height: 1.5),
             ),
